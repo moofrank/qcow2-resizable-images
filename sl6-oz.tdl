@@ -1,0 +1,99 @@
+<template>
+ <name>sl65_x86_64-PD</name>
+ <description>Scientific Linux 6.5 x86_64 template</description>
+ <disk>
+   <size>3G</size>
+ </disk>
+ <os>
+   <name>SL-6</name>
+   <version>5</version>
+   <arch>x86_64</arch>
+   <install type='iso'>
+     <iso>http://mirror3.mirror.garr.it/mirrors/scientific/6.5/x86_64/iso/SL-65-x86_64-2014-01-27-Everything-DVD1.iso</iso>
+   </install>
+ </os>
+ 
+ <files>
+
+   <file name="/etc/sysconfig/network">
+NETWORKING=yes
+NOZEROCONF=yes
+   </file>
+         
+   <file name="/etc/sysconfig/network-scripts/ifcfg-eth0">
+DEVICE=eth0
+BOOTPROTO=dhcp
+ONBOOT=yes
+TYPE=Ethernet
+   </file>
+
+   <file name="/etc/ntp.conf">
+server ntp.pd.infn.it
+   </file>
+      
+ </files>
+
+ <commands>
+
+   <command name="removeudevnet">
+rm -f /etc/udev/rules.d/70-persistent-net.rules
+rm -f /lib/udev/rules.d/75-persistent-net-generator.rules
+   </command>
+
+   <command name="epel">
+rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL
+rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+   </command>
+
+   <command name="cloud-user">
+adduser cloud-user -G adm,wheel
+   </command>
+
+   <command name="nopwdwheel">
+echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+   </command>
+
+   <command name="setlocaltime">
+rm -f /etc/localtime
+ln -s /usr/share/zoneinfo/Europe/Rome /etc/localtime
+   </command>
+
+   <command name="setntpdon">
+/sbin/chkconfig ntpd on
+   </command>
+
+   <command name="mkinitrd">
+mkinitrd --with virtio_pci --with virtio_ring --with virtio_blk --with virtio_net --with virtio_balloon --with virtio -f /boot/initramfs-$(ls /lib/modules/).img $(ls /lib/modules/)
+   </command>
+
+   <command name="update">
+yum update -y
+   </command>
+
+   <command name="packages">
+yum install -y cloud-init cloud-utils cloud-utils-growpart dracut-modules-growroot nc httpd parted git
+   </command>
+
+   <command name="installresizefs">
+cd /tmp
+git clone https://github.com/alvise72/Partition-Resize-SL-CentOS-6.x.git
+cd Partition-Resize-SL-CentOS-6.x/linux-rootfs-resize
+chmod +x ./install
+./install
+   </command>
+
+   <command name="sethostname_always">
+sed -i 's/set_hostname/[set_hostname, always]/g' /etc/cloud/cloud.cfg
+   </command>
+
+   <command name="makeunchangableudevnet">
+touch /etc/udev/rules.d/70-persistent-net.rules
+touch /lib/udev/rules.d/75-persistent-net-generator.rules
+chattr +i /etc/udev/rules.d/70-persistent-net.rules
+chattr +i /lib/udev/rules.d/75-persistent-net-generator.rules
+   </command>
+ 
+ </commands>
+
+</template>
