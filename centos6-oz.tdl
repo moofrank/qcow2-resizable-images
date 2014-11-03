@@ -77,8 +77,9 @@ yum install -y cloud-init cloud-utils cloud-utils-growpart dracut-modules-growro
 
    <command name="installresizefs">
 cd /tmp
-git clone https://github.com/flegmatik/linux-rootfs-resize.git
-cd linux-rootfs-resize
+git clone git@github.com:CloudPadovana/qcow2-resizable-images
+cd qcow2-resizable-images/linux-rootfs-resize
+chmod +x ./install
 ./install
    </command>
 
