@@ -22,3 +22,5 @@ INSTRUCTIONS:
 5 Load the QCOW2 image into Glance, taking care of the correct minimum disk space specification::
 
 	glance image-create --progress --name="CentOS 6.5 - x64" --disk-format=qcow2 --container-format=bare --is-public=False --min-disk 3 --min-ram 512 < /<wherever-you-can-write>/centos65_x86_64-sparse.qcow2
+
+Note: after step 4 check that the sparsed file's size is actually smaller than the qcow2. In fact, in some cases this step can increase it depending on how you filled the root disk.
