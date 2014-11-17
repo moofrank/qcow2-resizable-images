@@ -9,7 +9,7 @@ INSTRUCTIONS:
 
 2. To build the raw image execute the command:
 
-	oz-install -d 4 -t 7200 -u -a <kickstart-file> -s /<wherever-you-can-write>/centos65_x86_64.dsk oz.tdl
+	oz-install -d 4 -t 7200 -u -a < kickstart-file > -s /< wherever-you-can-write >/centos65_x86_64.dsk oz.tdl
 
 3. Turn the built image into QCOW2 compressed format:
 
