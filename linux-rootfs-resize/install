@@ -77,7 +77,9 @@ grub-mod() {
       # copy kernel
       [ ! -f ${kernel}-mod ] && cp ${kernel} ${kernel}-mod
       # grub title
-      grub_title="$(cat /etc/redhat-release) $(uname -r) mod"
+      #grub_title="$(cat /etc/redhat-release) $(uname -r) mod"
+      UNAME="$(ls -1tr /boot/|grep vmlinuz|tail -1|awk -F'vmlinuz-' '{print $2}')"
+      grub_title="$(cat /etc/redhat-release) $UNAME mod"
       # grub kernel (softlink)
       grub_kernel=${kernel}-mod
       # modified initrd
@@ -128,8 +130,10 @@ distro=""
   if [[ "$(cat /etc/redhat-release)" == *CentOS\ release\ 6* ]] || [[ "$(cat /etc/redhat-release)" == *Scientific\ Linux\ release\ 6* ]]; then
     distro="centos-6"
     initrd_path="bin sbin usr/bin usr/sbin"
-    initrd="/boot/initramfs-$(uname -r).img"
-    kernel="/boot/vmlinuz-$(uname -r)"
+    #initrd="/boot/initramfs-$(uname -r).img"
+    UNAME="$(ls -1tr /boot/|grep vmlinuz|tail -1|awk -F'vmlinuz-' '{print $2}')"
+    initrd="/boot/initramfs-$UNAME.img"
+    kernel="/boot/vmlinuz-$UNAME"
     init_script="init"
     proc_insert_point="^export PATH=.*"
     proc_name="growroot"
@@ -142,8 +146,9 @@ distro=""
   if [[ "$(cat /etc/issue)" == *Debian\ GNU\/Linux\ 7* ]]; then
     distro="debian-7"
     initrd_path="bin sbin"
-    initrd="/boot/initrd.img-$(uname -r)"
-    kernel="/boot/vmlinuz-$(uname -r)"
+    UNAME="$(ls -1tr /boot/|grep vmlinuz|tail -1|awk -F'vmlinuz-' '{print $2}')"
+    initrd="/boot/initrd.img-$UNAME"
+    kernel="/boot/vmlinuz-$UNAME"
     init_script="scripts/local"
     proc_insert_point="^mountroot()"
     proc_name="\        growroot"
@@ -153,8 +158,9 @@ distro=""
   elif [[ "$(cat /etc/issue)" == *Debian\ GNU\/Linux\ 6* ]]; then
     distro="debian-6"
     initrd_path="bin sbin"
-    initrd="/boot/initrd.img-$(uname -r)"
-    kernel="/boot/vmlinuz-$(uname -r)"
+    UNAME="$(ls -1tr /boot/|grep vmlinuz|tail -1|awk -F'vmlinuz-' '{print $2}')"
+    initrd="/boot/initrd.img-$UNAME"
+    kernel="/boot/vmlinuz-$UNAME"
     init_script="scripts/local"
     proc_insert_point="^mountroot()"
     proc_name="\        growroot"
